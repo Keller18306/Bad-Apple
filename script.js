@@ -2,20 +2,43 @@ const isRemix = /remix/i.test(window.location.search) || false
 
 window.onload = init
 
-const offset_time = 0
+const offset_time = 20
 
-const fix_time = 1500
+const speed = 1
+
+const fix_time = isRemix ? 1500 : 0
 
 async function init() {
-    const video = document.getElementById('main_video')
-    const remix_music = document.getElementById('remix')
+    const video = document.getElementById('video')
+    const audio = document.getElementById('audio')
 
-    function setRemix(isRemix) {
-        if (isRemix) video.muted = true
-        else remix_music.muted = true
+    video.onpause = () => {
+        if(audio.paused) return;
+        audio.pause()
     }
 
-    setRemix(isRemix)
+    video.onplay = () => {
+        if(!audio.paused || audio.currentTime == 0) return;
+        audio.play()
+    }
+
+    async function setRemix(isRemix) {
+        /*if (isRemix) video.muted = true
+        else remix_music.muted = true*/
+
+        const promise = new Promise(res => {
+            audio.oncanplay = res
+        })
+
+        audio.src = (isRemix ? 'remix' : 'original') + '.mp3'
+
+        return promise
+    }
+
+    await setRemix(isRemix)
+
+    video.playbackRate = speed
+    audio.playbackRate = speed
 
     const comment_element = document.getElementById('comment')
 
@@ -26,31 +49,57 @@ async function init() {
 
     const time = document.getElementById('time')
 
+    const person_element = document.getElementById('person')
+
+    const need_press = document.getElementById('press')
+
     function resetTime() {
-        video.currentTime = offset_time + (fix_time/1e3)
-        remix_music.currentTime = offset_time
+        setPosition(offset_time, false)
     }
+
+    async function setPosition(time = 0, autoplay = true) {
+        video.currentTime = time + (fix_time/1e3)
+        audio.currentTime = time
+
+        if(autoplay) await Promise.all([
+            video.play(),
+            audio.play()
+        ])
+    }
+
+    window.setPosition = setPosition
 
     try {
         resetTime()
         await Promise.all([
             video.play(),
-            remix_music.play()
+            audio.play()
         ])
+
+        document.onclick = () => {
+            console.log(Math.floor(video.currentTime * 1e3))
+        }
     } catch (e) {
+        need_press.hidden = false
+
         video.currentTime = 0
-        remix_music.currentTime = 0
-        await video.pause()
-        await remix_music.pause()
+        audio.currentTime = 0
+
+        video.pause()
+        audio.pause()
 
         document.onclick = async () => {
+            need_press.hidden = true
+
             document.onclick = () => {
                 console.log(Math.floor(video.currentTime * 1e3))
             }
+
             resetTime()
+
             await Promise.all([
                 video.play(),
-                remix_music.play()
+                audio.play()
             ])
         }
     }
@@ -97,12 +146,26 @@ async function init() {
         time.textContent = timestamp
     }
 
+    function setPersons(timestamp) {
+        const fpersons = [];
+
+        for (const person of persons) {
+            if (!(timestamp >= person.time[0] && timestamp <= person.time[1])) continue;
+
+            fpersons.push(person.name)
+            //break;
+        }
+
+        person_element.textContent = fpersons.join(', ')
+    }
+
     function update() {
         const timestamp = Math.floor(video.currentTime * 1e3)
 
         setSubtitles(timestamp)
         setComments(timestamp)
         setTime(timestamp)
+        setPersons(timestamp)
 
         requestAnimationFrame(update)
     }

@@ -1,4 +1,3 @@
-
 const subtitles = [
     {
         japan: 'Японский',
@@ -9,7 +8,7 @@ const subtitles = [
     },
     {
         japan: '流れてく　時の中ででも　気だるさが　ほらグルグル廻って',
-        trascription: 'Nagareteku toki no naka de demo kedarusa ga, hora, GURUGURU mawatte',
+        trascription: 'Nagareteku toki no naka de demo kedarusa ga, hora, guruguru mawatte',
         translitarate: 'Нагарэтэку токи но нака дэ дэмо кэдаруса га хора гуругуру маваттэ',
         translate: 'Даже если время течет так незаметно, вечность угнетает меня порой невыносимо.',
         time: [28700, 35900]
@@ -93,7 +92,7 @@ const subtitles = [
     },
     {
         japan: '流れてく　時の中ででも　気だるさがほら　グルグル廻って',
-        trascription: 'Nagareteku toki no naka de demo kedarusa ga, hora, GURUGURU mawatte',
+        trascription: 'Nagareteku toki no naka de demo kedarusa ga, hora, guruguru mawatte',
         translitarate: 'Нагарэтэку токи но нака дэ дэмо кэдаруса га, хора гуругуру маваттэ',
         translate: 'Даже если время течет так незаметно, вечность угнетает меня порой невыносимо.',
         time: [126592, 133486]
