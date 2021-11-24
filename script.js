@@ -2,7 +2,7 @@ const isRemix = /remix/i.test(window.location.search) || false
 
 window.onload = init
 
-const offset_time = 20
+const offset_time = 0
 
 const speed = 1
 
